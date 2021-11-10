@@ -54,7 +54,7 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 
 bindsym XF86Launch7 exec maim -u | xclip -selection clipboard -t image/png -i
 bindsym XF86Launch8 exec maim -s -u | xclip -selection clipboard -t image/png -i
-bindsym XF86Launch9 exec maim -s -u "/home/$USER/Pictures/screenshot/$(date)"
+bindsym XF86Launch9 exec maim -s -u "/home/$USER/Pictures/screenshots/$(date)"
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
