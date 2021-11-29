@@ -21,7 +21,7 @@ set nowrap
 
 set incsearch
 set scrolloff=8
-set colorcolumn=100
+set colorcolumn=100,120
 set signcolumn=yes
 
 let g:blamer_enabled = 0
@@ -30,6 +30,37 @@ let g:blamer_show_in_insert_modes = 0
 let g:blamer_prefix = ' 😡 '
 
 let g:airline_powerline_fonts = 1
+" let g:airline_theme='sol'
+
+
+" MarkdownPreview
+let g:mkdp_auto_start = 0
+let g:mkdp_auto_close = 1
+let g:mkdp_refresh_slow = 0
+let g:mkdp_command_for_global = 0
+let g:mkdp_open_to_the_world = 0
+let g:mkdp_open_ip = ''
+let g:mkdp_browser = ''
+let g:mkdp_echo_preview_url = 0
+let g:mkdp_browserfunc = ''
+let g:mkdp_preview_options = {
+    \ 'mkit': {},
+    \ 'katex': {},
+    \ 'uml': {},
+    \ 'maid': {},
+    \ 'disable_sync_scroll': 0,
+    \ 'sync_scroll_type': 'middle',
+    \ 'hide_yaml_meta': 1,
+    \ 'sequence_diagrams': {},
+    \ 'flowchart_diagrams': {},
+    \ 'content_editable': v:false,
+    \ 'disable_filename': 0
+    \ }
+let g:mkdp_markdown_css = ''
+let g:mkdp_highlight_css = ''
+let g:mkdp_port = ''
+let g:mkdp_page_title = '「${name}」'
+let g:mkdp_filetypes = ['markdown']
 
 call plug#begin('~/.vim/plugged')
 
@@ -39,7 +70,6 @@ call plug#begin('~/.vim/plugged')
   Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
   Plug 'kyazdani42/nvim-web-devicons'
-  Plug 'kyazdani42/nvim-tree.lua' 
 
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} |
     \ Plug 'p00f/nvim-ts-rainbow'
@@ -53,17 +83,30 @@ call plug#begin('~/.vim/plugged')
       \ Plug 'saadparwaiz1/cmp_luasnip' |
       \ Plug 'L3MON4D3/LuaSnip'
 
+  Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
   Plug 'ray-x/lsp_signature.nvim'
   Plug 'nanotee/sqls.nvim'
+
+  Plug 'preservim/nerdtree'
 
   Plug 'folke/which-key.nvim'
 
   Plug 'tpope/vim-fugitive'
   Plug 'airblade/vim-gitgutter'
   Plug 'APZelos/blamer.nvim'
+
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
+
+  Plug 'vim-scripts/trivial256'
+  Plug 'chriskempson/base16-vim'
+  Plug 'vim-scripts/summerfruit256.vim'
+  Plug 'vim-scripts/pyte'
+  Plug 'vim-scripts/oceanlight'
+  Plug 'vim-scripts/eclipse.vim'
+  Plug 'vim-scripts/autumnleaf'
+  Plug 'vim-scripts/nuvola.vim'
 
   Plug 'elixir-editors/vim-elixir'
   Plug 'vim-test/vim-test'
@@ -78,18 +121,36 @@ call plug#begin('~/.vim/plugged')
   Plug 'c-brenn/fuzzy-projectionist.vim'
   Plug 'andyl/vim-projectionist-elixir'
 
-  Plug 'chriskempson/base16-vim'
 
-  " Plug 'xolox/vim-misc'
-  " Plug 'xolox/vim-colorscheme-switcher'
+  Plug 'wakatime/vim-wakatime'
+
+  Plug 'xolox/vim-misc'
+  Plug 'xolox/vim-colorscheme-switcher'
 
 call plug#end()
 
+
+
+"Light
+" colorscheme morning
+" colorscheme delek
+" colorscheme base16-harmonic-light
+" colorscheme peachpuff
+" colorscheme trivial256
+" colorscheme nuvola
+" colorscheme autumnleaf
+" colorscheme pyte
+
+"Dark
+" colorscheme elflord
+" colorscheme base16-materia
+" colorscheme base16-irblack 
+" colorscheme base16-flat 
 colorscheme base16-seti
 " colorscheme base16-brewer
-" colorscheme base16-classic-dark
 
 hi VertSplit ctermbg=NONE guibg=NONE
+" hi Normal ctermbg=NONE guibg=NONE
 set termguicolors
 
 vnoremap <C-y> "+y
@@ -137,6 +198,7 @@ nnoremap <leader>bn :enew<CR>
 " Windows 
 nnoremap <leader>w/ :vsp<CR>
 nnoremap <leader>w- :sp<CR>
+nnoremap <leader>wr :resize 
 
 nnoremap <leader><Tab> :e #<CR>
 
@@ -146,9 +208,9 @@ nnoremap <leader>wj :wincmd j<CR>
 nnoremap <leader>wh :wincmd h<CR>
 nnoremap <leader>wd :q <CR>
 
-" ColorScheme
-" nnoremap <F7> :PrevColorScheme<CR>
-" nnoremap <F8> :NextColorScheme<CR>
+"ColorScheme
+nnoremap <F7> :PrevColorScheme<CR>
+nnoremap <F8> :NextColorScheme<CR>
 
 let test#strategy = "neoterm"
 let g:neoterm_default_mod='vert botright'
@@ -169,82 +231,12 @@ nnoremap gt :A<CR>
 " LSPConfig
 nnoremap gd <cmd>lua vim.lsp.buf.definition<cr>
 
-let g:nvim_tree_gitignore = 1 "0 by default
-let g:nvim_tree_quit_on_open = 1 "0 by default, closes the tree when you open a file
-let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
-let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
-let g:nvim_tree_highlight_opened_files = 1 "0 by default, will enable folder and file icon highlight for opened files/directories.
-let g:nvim_tree_root_folder_modifier = ':~' "This is the default. See :help filename-modifiers for more options
-let g:nvim_tree_add_trailing = 1 "0 by default, append a trailing slash to folder names
-let g:nvim_tree_group_empty = 1 " 0 by default, compact folders that only contain a single folder into one node in the file tree
-let g:nvim_tree_disable_window_picker = 1 "0 by default, will disable the window picker.
-let g:nvim_tree_icon_padding = ' ' "one space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
-let g:nvim_tree_symlink_arrow = ' >> ' " defaults to ' ➛ '. used as a separator between symlinks' source and target.
-let g:nvim_tree_respect_buf_cwd = 1 "0 by default, will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
-let g:nvim_tree_create_in_closed_folder = 0 "1 by default, When creating files, sets the path of a file when cursor is on a closed folder to the parent folder when 0, and inside the folder when 1.
-let g:nvim_tree_refresh_wait = 500 "1000 by default, control how often the tree can be refreshed, 1000 means the tree can be refresh once per 1000ms.
-let g:nvim_tree_window_picker_exclude = {
-    \   'filetype': [
-    \     'notify',
-    \     'packer',
-    \     'qf'
-    \   ],
-    \   'buftype': [
-    \     'terminal'
-    \   ]
-    \ }
-" Dictionary of buffer option names mapped to a list of option values that
-" indicates to the window picker that the buffer's window should not be
-" selectable.
-let g:nvim_tree_special_files = { 'README.md': 1, 'Makefile': 1, 'MAKEFILE': 1 } " List of filenames that gets highlighted with NvimTreeSpecialFile
-let g:nvim_tree_show_icons = {
-    \ 'git': 1,
-    \ 'folders': 0,
-    \ 'files': 0,
-    \ 'folder_arrows': 0,
-    \ }
-"If 0, do not show the icons for one of 'git' 'folder' and 'files'
-"1 by default, notice that if 'files' is 1, it will only display
-"if nvim-web-devicons is installed and on your runtimepath.
-"if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
-"but this will not work when you set indent_markers (because of UI conflict)
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
 
-" default will show icon by default if no icon is provided
-" default shows no icon by default
-let g:nvim_tree_icons = {
-    \ 'default': '',
-    \ 'symlink': '',
-    \ 'git': {
-    \   'unstaged': "✗",
-    \   'staged': "✓",
-    \   'unmerged': "",
-    \   'renamed': "➜",
-    \   'untracked': "★",
-    \   'deleted': "",
-    \   'ignored': "◌"
-    \   },
-    \ 'folder': {
-    \   'arrow_open': "",
-    \   'arrow_closed': "",
-    \   'default': "",
-    \   'open': "",
-    \   'empty': "",
-    \   'empty_open': "",
-    \   'symlink': "",
-    \   'symlink_open': "",
-    \   }
-    \ }
-
-nnoremap <C-n> :NvimTreeToggle<CR>
-nnoremap <leader>r :NvimTreeRefresh<CR>
-nnoremap <leader>n :NvimTreeFindFile<CR>
-" NvimTreeOpen, NvimTreeClose, NvimTreeFocus, NvimTreeFindFileToggle, and NvimTreeResize are also available if you need them
-
-set termguicolors " this variable must be enabled for colors to be applied properly
-
-" a list of groups can be found at `:help nvim_tree_highlight`
-highlight NvimTreeFolderIcon guibg=blue
-
+nnoremap <leader>rf :TREPLSendFile<CR>
 
 lua <<EOF
 
@@ -293,7 +285,7 @@ require('telescope').setup {
 -- require('telescope').load_extension('fzf')
 
 require'nvim-treesitter.configs'.setup {
-    ensure_installed = {"elixir", "typescript"},
+    ensure_installed = {"elixir", "typescript", "python"},
     pickers = {
         previewer = false,
     },
@@ -311,7 +303,7 @@ local nvim_lsp = require('lspconfig')
 local cmp = require'cmp'
 
 require'lspconfig'.sqls.setup{
-  cmd = {"/home/george/go/bin/sqls", "-config", "/home/george/.config/sqls/config.yml"},
+  cmd = {"/home/user/go/bin/sqls", "-config", "/home/user/.config/sqls/config.yml"},
     on_attach = function(client)
         client.resolved_capabilities.execute_command = true
 
@@ -367,9 +359,14 @@ end
 
 nvim_lsp.elixirls.setup{
   capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-  cmd = { "/home/george/.elixir-ls/language_server.sh" };
+  cmd = { "/home/user/.elixir-ls/language_server.sh" };
   on_attach = on_attach,
 }
+
+require'lspconfig'.pylsp.setup{
+  on_attach = on_attach,
+}
+
 
  require "lsp_signature".setup({
     bind = true,
@@ -384,51 +381,4 @@ nvim_lsp.elixirls.setup{
 require("which-key").setup {
   }
 
-require'nvim-tree'.setup {
-  disable_netrw       = true,
-  hijack_netrw        = true,
-  open_on_setup       = false,
-  ignore_ft_on_setup  = {},
-  auto_close          = false,
-  open_on_tab         = false,
-  hijack_cursor       = false,
-  update_cwd          = false,
-  update_to_buf_dir   = {
-    enable = true,
-    auto_open = true,
-  },
-  diagnostics = {
-    enable = false,
-    icons = {
-      hint = "",
-      info = "",
-      warning = "",
-      error = "",
-    }
-  },
-  update_focused_file = {
-    enable      = false,
-    update_cwd  = false,
-    ignore_list = {}
-  },
-  system_open = {
-    cmd  = nil,
-    args = {}
-  },
-  filters = {
-    dotfiles = false,
-    custom = {}
-  },
-  view = {
-    width = 30,
-    height = 30,
-    hide_root_folder = false,
-    side = 'left',
-    auto_resize = false,
-    mappings = {
-      custom_only = false,
-      list = {}
-    }
-  }
-}
 
