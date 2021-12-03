@@ -1,7 +1,3 @@
-for f in split(glob('~/.config/nvim/config/modules/*.lua'), '\n')
-    exe 'source' f
-endfor
-
 set tabstop=4 softtabstop=4
 
 set shiftwidth=4
@@ -13,6 +9,9 @@ set smartindent
 set foldmethod=indent
 set nofoldenable
 
+set noswapfile
+set nobackup
+
 set relativenumber
 set nu
 set noerrorbells
@@ -21,7 +20,7 @@ set nowrap
 
 set incsearch
 set scrolloff=8
-set colorcolumn=100,120
+set colorcolumn=120
 set signcolumn=yes
 
 let g:blamer_enabled = 0
@@ -30,8 +29,10 @@ let g:blamer_show_in_insert_modes = 0
 let g:blamer_prefix = ' 😡 '
 
 let g:airline_powerline_fonts = 1
-" let g:airline_theme='sol'
 
+let g:codi#width=80
+let g:codi#rightalign=1
+let g:codi#virtual_text=0 
 
 " MarkdownPreview
 let g:mkdp_auto_start = 0
@@ -72,9 +73,11 @@ call plug#begin('~/.vim/plugged')
   Plug 'kyazdani42/nvim-web-devicons'
 
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} |
-    \ Plug 'p00f/nvim-ts-rainbow'
-  Plug 'neovim/nvim-lspconfig'
-
+      \ Plug 'nvim-treesitter/playground', { 'on': 'TSPlaygroundToggle' } |
+      \ Plug 'p00f/nvim-ts-rainbow'
+  Plug 'neovim/nvim-lspconfig' |
+      \ Plug 'williamboman/nvim-lsp-installer'
+ 
   Plug 'hrsh7th/nvim-cmp'
 
   Plug 'hrsh7th/cmp-nvim-lsp' |
@@ -88,9 +91,12 @@ call plug#begin('~/.vim/plugged')
   Plug 'ray-x/lsp_signature.nvim'
   Plug 'nanotee/sqls.nvim'
 
+  Plug 'metakirby5/codi.vim'
+
   Plug 'preservim/nerdtree'
 
   Plug 'folke/which-key.nvim'
+  Plug 'lukas-reineke/indent-blankline.nvim'
 
   Plug 'tpope/vim-fugitive'
   Plug 'airblade/vim-gitgutter'
@@ -99,25 +105,18 @@ call plug#begin('~/.vim/plugged')
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
 
-  Plug 'vim-scripts/trivial256'
   Plug 'chriskempson/base16-vim'
-  Plug 'vim-scripts/summerfruit256.vim'
-  Plug 'vim-scripts/pyte'
-  Plug 'vim-scripts/oceanlight'
-  Plug 'vim-scripts/eclipse.vim'
-  Plug 'vim-scripts/autumnleaf'
-  Plug 'vim-scripts/nuvola.vim'
 
   Plug 'elixir-editors/vim-elixir'
   Plug 'vim-test/vim-test'
   Plug 'kassio/neoterm'
-  Plug 'tpope/vim-projectionist'
   Plug 'tpope/vim-commentary'
 
   Plug 'mfussenegger/nvim-dap'
 
   " Plug 'diepm/vim-rest-console'
 
+  Plug 'tpope/vim-projectionist'
   Plug 'c-brenn/fuzzy-projectionist.vim'
   Plug 'andyl/vim-projectionist-elixir'
 
@@ -146,8 +145,9 @@ call plug#end()
 " colorscheme base16-materia
 " colorscheme base16-irblack 
 " colorscheme base16-flat 
-colorscheme base16-seti
-" colorscheme base16-brewer
+" colorscheme base16-seti
+colorscheme base16-brewer
+" colorscheme base16-brogrammer
 
 hi VertSplit ctermbg=NONE guibg=NONE
 " hi Normal ctermbg=NONE guibg=NONE
@@ -162,16 +162,14 @@ let mapleader = " "
 " Vim 
 nnoremap <leader><leader> :
 nnoremap <leader>cf :e ~/.config/nvim/init.vim<CR>
-nnoremap <leader>cr :so %<CR>
+nnoremap <leader>cr :so ~/.config/nvim/init.vim<CR>
 nnoremap <leader>qq :q<CR>
 nnoremap <leader>Q :q!<CR>
 
-nnoremap <leader>tt :T pwd<CR>
+nnoremap <leader>tt :Ttoggle<CR>
 tnoremap <Esc> <C-\><C-n>
 
 " Git
-" nnoremap <leader>gs :Neogit kind=split<CR>
-" nnoremap <leader>gf :Neogit<CR>
 nnoremap <leader>gs :Git<CR>
 nnoremap <leader>gb :BlamerToggle<CR>
 
@@ -224,6 +222,7 @@ nnoremap <leader>tf :TestFile<CR>
 nnoremap <leader>tr :TestLast<CR>
 nnoremap <leader>ta :TestSuite<CR>
 nnoremap <leader>tp :T mix format && mix credo && mix dialyzer && mix test<CR> 
+nnoremap <leader>tm :T MIX_ENV=test mix do ecto.drop, ecto.create, ecto.migrate<CR>
 nnoremap <leader>twf :T find test lib \| entr -cr mix test %<CR>
 nnoremap <leader>tws :T find test lib \| entr -cr mix test %:<C-r>=line('.')<CR><CR>
 nnoremap gt :A<CR>
@@ -257,14 +256,6 @@ end
 local actions = require("telescope.actions")
 
 require('telescope').setup {
---[[  " extensions = {
-  "   fzf = {
-  "     fuzzy = true,
-  "     override_generic_sorter = true,
-  "     override_file_sorter = true,
-  "     case_mode = "smart_case",
-  "   },
-  " }, ]]--
   defaults = {
     buffer_previewer_maker = new_maker,
     mappings = {
@@ -278,11 +269,27 @@ require('telescope').setup {
     buffers = {
       show_all_buffers = true,
       previewer = false,
+     mappings = {
+        i = {
+          ["<c-e>"] = "delete_buffer",
+        },
+        n = {
+            ["d"] = "delete_buffer",
+            ["<c-e>"] = "delete_buffer",
+        }
+      }
     }
   }
 }
 
--- require('telescope').load_extension('fzf')
+vim.cmd [[highlight IndentBlanklineIndent1 guifg=#212121 gui=nocombine]]
+
+require("indent_blankline").setup {
+    show_current_context_start = true,
+    buftype_exclude = {"terminal"},
+    char_highlight_list = { "IndentBlanklineIndent1",},
+}
+
 
 require'nvim-treesitter.configs'.setup {
     ensure_installed = {"elixir", "typescript", "python"},
@@ -359,9 +366,16 @@ end
 
 nvim_lsp.elixirls.setup{
   capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-  cmd = { "/home/user/.elixir-ls/language_server.sh" };
+  cmd = { vim.fn.stdpath("data") .. "/lsp_servers/elixir/elixir-ls/language_server.sh" },
   on_attach = on_attach,
 }
+
+nvim_lsp.efm.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  filetypes = {"elixir"},
+  cmd = { vim.fn.stdpath("data") .. "/lsp_servers/efm/efm-langserver" }
+})
 
 require'lspconfig'.pylsp.setup{
   on_attach = on_attach,
@@ -375,10 +389,5 @@ require'lspconfig'.pylsp.setup{
     }
   })
 
--- local neogit = require('neogit')
--- neogit.setup {}
-
-require("which-key").setup {
-  }
-
+require("which-key").setup {}
 
