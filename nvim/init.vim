@@ -63,11 +63,13 @@ let g:mkdp_port = ''
 let g:mkdp_page_title = '「${name}」'
 let g:mkdp_filetypes = ['markdown']
 
+let g:Hexokinase_highlighters = ['backgroundfull']
+
 call plug#begin('~/.vim/plugged')
 
   Plug 'nvim-lua/popup.nvim'
   Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-telescope/telescope.nvim'
+  Plug 'nvim-telescope/telescope.nvim', { 'commit': '80cdb00' }
   Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
   Plug 'kyazdani42/nvim-web-devicons'
@@ -77,6 +79,8 @@ call plug#begin('~/.vim/plugged')
       \ Plug 'p00f/nvim-ts-rainbow'
   Plug 'neovim/nvim-lspconfig' |
       \ Plug 'williamboman/nvim-lsp-installer'
+
+  Plug 'gbprod/cutlass.nvim'
  
   Plug 'hrsh7th/nvim-cmp'
 
@@ -102,10 +106,19 @@ call plug#begin('~/.vim/plugged')
   Plug 'airblade/vim-gitgutter'
   Plug 'APZelos/blamer.nvim'
 
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
+  Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+  " Plug 'vim-airline/vim-airline'
+  " Plug 'vim-airline/vim-airline-themes'
+
+  " meu tema
+  Plug 'NTBBloodbath/doom-one.nvim'
+
+  Plug 'lifepillar/vim-colortemplate'
+
+  Plug 'dylnmc/synstack.vim'
 
   Plug 'chriskempson/base16-vim'
+  " Plug 'therubymug/vim-pyte'
 
   Plug 'elixir-editors/vim-elixir'
   Plug 'vim-test/vim-test'
@@ -120,8 +133,10 @@ call plug#begin('~/.vim/plugged')
   Plug 'c-brenn/fuzzy-projectionist.vim'
   Plug 'andyl/vim-projectionist-elixir'
 
+  Plug 'sbdchd/neoformat'
 
-  Plug 'wakatime/vim-wakatime'
+
+  " Plug 'wakatime/vim-wakatime'
 
   Plug 'xolox/vim-misc'
   Plug 'xolox/vim-colorscheme-switcher'
@@ -172,6 +187,12 @@ tnoremap <Esc> <C-\><C-n>
 " Git
 nnoremap <leader>gs :Git<CR>
 nnoremap <leader>gb :BlamerToggle<CR>
+nnoremap <leader>gP :Git push<CR>
+nnoremap <leader>gp :Git pull<CR>
+" nnoremap <leader>gco :Git checkout -b 
+
+nmap <silent><leader>gco <Plug>Telescope git_branches<CR>
+
 
 nnoremap <leader>fs :w<CR> 
 nnoremap <leader>W :w!<CR> 
@@ -183,11 +204,13 @@ nnoremap <leader>sd :SqlsSwitchDatabase<CR>
 nnoremap <leader>sc :SqlsSwitchConnection<CR>
 
 " Using Lua functions
-nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
-nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <Leader>ff :lua require'telescope.builtin'.find_files(require('telescope.themes').get_ivy({}))<cr>
+nnoremap <leader>fg <cmd>lua require'telescope.builtin'.live_grep(require('telescope.themes').get_ivy({}))<cr>
 nnoremap <leader>bb <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 nnoremap <leader>ps :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
+
+nnoremap <leader>gco <cmd>lua require('telescope.builtin').git_branches()<cr>
 
 nnoremap <leader>bd :bd<cr>
 nnoremap <leader>bD :bd!<cr>
@@ -221,11 +244,26 @@ nnoremap <leader>ts :TestNearest<CR>
 nnoremap <leader>tf :TestFile<CR>
 nnoremap <leader>tr :TestLast<CR>
 nnoremap <leader>ta :TestSuite<CR>
+nnoremap <leader>te :T mix test --failed<CR>
 nnoremap <leader>tp :T mix format && mix credo && mix dialyzer && mix test<CR> 
+nnoremap <leader>td :T mix dialyzer<CR>
 nnoremap <leader>tm :T MIX_ENV=test mix do ecto.drop, ecto.create, ecto.migrate<CR>
+nnoremap <leader>tc :T mix compile --all-warnings --warnings-as-errors<CR>
 nnoremap <leader>twf :T find test lib \| entr -cr mix test %<CR>
 nnoremap <leader>tws :T find test lib \| entr -cr mix test %:<C-r>=line('.')<CR><CR>
+nnoremap <leader>twa :T find test lib \| entr -cr mix test<CR>
+nnoremap <leader>twe :T find test lib \| entr -cr mix test --failed<CR>
+nnoremap <leader>tq :Tkill<CR>
 nnoremap gt :A<CR>
+
+" Docker
+nnoremap <leader>dc s :T docker container ls -a<CR>
+
+" Docker
+nnoremap <leader>dcs :T docker container ls -a<CR>
+nnoremap <leader>dcs :T docker compose ls -a<CR>
+nnoremap <leader>dcu :T docker compose up -d<CR>
+nnoremap <leader>dcd :T docker compose down<CR>
 
 " LSPConfig
 nnoremap gd <cmd>lua vim.lsp.buf.definition<cr>
@@ -236,6 +274,8 @@ nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 
 nnoremap <leader>rf :TREPLSendFile<CR>
+nnoremap <leader>rr :TREPLSendLine<CR> 
+nnoremap <leader>rv :TREPLSendSelection<CR>
 
 lua <<EOF
 
@@ -292,7 +332,7 @@ require("indent_blankline").setup {
 
 
 require'nvim-treesitter.configs'.setup {
-    ensure_installed = {"elixir", "typescript", "python"},
+    ensure_installed = {"elixir", "typescript"},
     pickers = {
         previewer = false,
     },
@@ -319,6 +359,9 @@ require'lspconfig'.sqls.setup{
         }
     end
 }
+require("cutlass").setup({
+        cut_key = "m"
+    })
 
 cmp.setup({
   snippet = {
@@ -377,13 +420,10 @@ nvim_lsp.efm.setup({
   cmd = { vim.fn.stdpath("data") .. "/lsp_servers/efm/efm-langserver" }
 })
 
-require'lspconfig'.pylsp.setup{
-  on_attach = on_attach,
-}
-
-
  require "lsp_signature".setup({
     bind = true,
+    transparency = 50, -- disabled by default, allow floating win transparent value 1~100
+    floating_window = true,
     handler_opts = {
       border = "single"
     }
