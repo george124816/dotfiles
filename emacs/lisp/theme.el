@@ -1,53 +1,56 @@
-;; clean screen
-(setq inhibit-startup-message t)
-(setq visible-bell t)
+(menu-bar-mode 0)
+(when (display-graphic-p)
+  (tool-bar-mode 0)
+  (scroll-bar-mode 0))
 
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-(tooltip-mode -1)
-(set-fringe-mode 10)
-(menu-bar-mode -1)
+;; Set default font
+(set-face-attribute 'default nil
+                    :family "Iosevka"
+                    :height 160
+                    :weight 'normal
+                    :width 'normal)
 
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(use-package projectile)
+
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+(use-package treemacs
+  :ensure t
+  :after evil
+  :defer t
+ :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+  :config
+ (progn
+   (setq treemacs-show-cursor  nil))
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode 'always))
+
+(use-package treemacs-evil
+  :after (treemacs evil)
+  :ensure t)
+
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-items '((recents  . 10)
+                          (bookmarks . 5)
+                          (projects . 5)
+                          (agenda . 10)
+                          (registers . 5))))
+
+(provide 'dashboard-config)
+(require 'dashboard)
 
 (use-package 
   doom-themes 
   :ensure t 
-  :config (load-theme 'doom-1337 t))
-
-
-(defun replace-unicode-font-mapping (block-name old-font new-font) 
-  (let* ((block-idx (cl-position-if (lambda (i) 
-				      (string-equal (car i) block-name))
-				    unicode-fonts-block-font-mapping)) 
-	 (block-fonts (cadr (nth block-idx unicode-fonts-block-font-mapping))) 
-	 (updated-block (cl-substitute new-font old-font block-fonts 
-				       :test 'string-equal))) 
-    (setf (cdr (nth block-idx unicode-fonts-block-font-mapping)) 
-	  `(,updated-block))))
-
-(use-package 
-  all-the-icons 
-  :ensure t)
-
-(use-package 
-  unicode-fonts 
-
-  :disabled 
-  :custom (unicode-fonts-skip-font-groups '(low-quality-glyphs)) 
-  :config
-  ;; Fix the font mappings to use the right emoji font
-  (mapcar (lambda (block-name) 
-	    (replace-unicode-font-mapping block-name "Apple Color Emoji" "Noto Color Emoji")) 
-	  '("Dingbats" "Emoticons" "Miscellaneous Symbols and Pictographs"
-	    "Transport and Map Symbols")) 
-  (unicode-fonts-setup))
-
-;; emoji in buffers
-(use-package 
-  emojify 
-  :hook (erc-mode . emojify-mode) 
-  :commands emojify-mode)
-
-(use-package 
-  diminish)
+  :config (load-theme 'doom-city-lights t))
