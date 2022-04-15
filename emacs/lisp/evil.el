@@ -5,11 +5,15 @@
   (setq evil-want-C-u-scroll t) 
   (setq evil-want-keybinding nil)
   (setq evil-undo-system 'undo-tree) 
+
   :config
   (evil-mode 1))
 
+
 (use-package undo-tree
-  :init (global-undo-tree-mode 1))
+  :init (global-undo-tree-mode 1)
+  :config
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 
 ;; fix underline and underscore
 (with-eval-after-load 'evil
@@ -36,3 +40,7 @@
   :config
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
+
+(use-package evil-matchit
+  :config
+  (global-evil-matchit-mode 1))

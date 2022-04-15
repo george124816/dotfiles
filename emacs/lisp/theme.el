@@ -5,8 +5,8 @@
 
 ;; Set default font
 (set-face-attribute 'default nil
-                    :family "Iosevka"
-                    :height 160
+                    :family "Pragmata Pro"
+                    :height 140
                     :weight 'normal
                     :width 'normal)
 
@@ -26,9 +26,17 @@
  (progn
    (setq treemacs-show-cursor  nil))
 
+    (treemacs-define-RET-action 'file-node-closed #'treemacs-visit-node-in-most-recently-used-window)
+    (treemacs-define-RET-action 'file-node-open #'treemacs-visit-node-in-most-recently-used-window)
+ 
+    (treemacs-define-doubleclick-action 'file-node-closed #'treemacs-visit-node-in-most-recently-used-window)
+    (treemacs-define-doubleclick-action 'file-node-open #'treemacs-visit-node-in-most-recently-used-window)
+
     (treemacs-follow-mode t)
     (treemacs-filewatch-mode t)
-    (treemacs-fringe-indicator-mode 'always))
+    (treemacs-fringe-indicator-mode 'always)
+)
+
 
 (use-package treemacs-evil
   :after (treemacs evil)
@@ -50,7 +58,12 @@
 (provide 'dashboard-config)
 (require 'dashboard)
 
-(use-package 
-  doom-themes 
-  :ensure t 
-  :config (load-theme 'doom-city-lights t))
+(use-package afternoon-theme)
+
+(use-package color-theme-sanityinc-tomorrow)
+(use-package material-theme)
+(use-package apropospriate-theme)
+(use-package doom-themes)
+
+(load-theme 'doom-snazzy t)
+

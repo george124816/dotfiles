@@ -3,12 +3,20 @@
   (interactive) 
   (switch-to-buffer (other-buffer (current-buffer))))
 
+(defun open-config-file()
+  "Open init.el configuration file."
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+
 (use-package eshell-toggle
   :custom
   (eshell-toggle-use-projectile-root t))
 
 ;; workaround to use altgr + comma
 (global-set-key (kbd "s-ç") (lambda () (interactive) (insert "ç")))
+
+;; redefine gd on evil mode
+(define-key evil-normal-state-map "gt" 'projectile-toggle-between-implementation-and-test)
 
 (use-package general 
   :ensure t
@@ -31,6 +39,8 @@
 (global-definer
  "SPC" 'counsel-M-x
 
+ "cf" 'open-config-file
+
  "ff" 'counsel-fzf
  "fg" 'counsel-ag
 
@@ -47,9 +57,18 @@
  "w/"  '(split-window-right :which-key "split right")
  "w-"  '(split-window-below :which-key "split bottom")
 
+ ;; tests
+ "tf" 'exunit-verify
+ "ts" 'exunit-verify-single
+ "ta" 'exunit-verify-all
+
  "TAB" 'last-buffer
 
+ "gt" 'projectile-toggle-between-implementation-and-test
+
  "pt" 'treemacs
+ "pa" 'projectile-add-known-project
+ "ps" 'projectile-switch-project
  )
 
 ;; macro to create a group of keymapping
@@ -72,8 +91,12 @@ The prefix map is named 'my-DEF-map'."
  "d" 'kill-current-buffer)
 
 (general-global-menu-definer
- "lsp" "l"
- "i" 'lsp-format-buffer)
+  "lsp" "l"
+  "i" 'lsp-format-buffer
+  "n" 'lsp-ui-find-next-reference
+  "e" 'lsp-ui-flycheck-list
+  "S" 'lsp-execute-code-action
+ )
 
 (use-package which-key
   :config
