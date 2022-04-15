@@ -34,6 +34,8 @@
  "ff" 'counsel-fzf
  "fg" 'counsel-ag
 
+ "d" 'docker
+
  "tt" 'eshell-toggle
 
  "fs" 'save-buffer

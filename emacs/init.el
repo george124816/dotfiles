@@ -15,6 +15,11 @@
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
+(use-package exec-path-from-shell)
+
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
 ;; configure directories
 (setq auto-save-file-name-transforms '((".*" "~/.tmp/emacs/auto-save/" t)))
 (setq backup-directory-alist '(("." . "~/.tmp/emacs/backup/")))
