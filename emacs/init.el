@@ -27,7 +27,6 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file t)
 
-
 (defun load-directory (dir)
   (let ((load-it (lambda (f)
        (load-file (concat (file-name-as-directory dir) f)))))

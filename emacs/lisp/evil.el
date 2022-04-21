@@ -1,3 +1,5 @@
+
+
 ;;; evil mode
 (use-package evil
   :demand t
@@ -32,15 +34,30 @@
   (setq evil-want-integration t)
   (evil-collection-init))
 
-
-(use-package evil-org
-  :ensure t
-  :after org
-  :hook (org-mode . (lambda () evil-org-mode))
-  :config
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys))
-
 (use-package evil-matchit
   :config
   (global-evil-matchit-mode 1))
+
+;;; Org mode
+(setq org-agenda-files '("~/Dropbox/org"))
+(setq org-todo-keywords '((sequence "TODO" "DOING" "REVIEW" "DONE")))
+
+(require 'org)
+
+(setq org-log-done t)
+
+(global-set-key (kbd "C-c a") 'org-agenda)
+
+(setq org-startup-folded t)
+
+(use-package evil-org
+  :straight
+  (evil-org :type git
+	    :host github
+	    :repo "Somelauw/evil-org-mode"
+	    :files ("evil-org.el" "evil-org-agenda.el"))
+  :after org
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys)
+  (add-hook 'org-mode-hook 'evil-org-mode))

@@ -8,6 +8,10 @@
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 
+(defun elixir-setup()
+  (interactive)
+  (message (projectile-project-root)))
+
 (use-package eshell-toggle
   :custom
   (eshell-toggle-use-projectile-root t))
@@ -17,6 +21,15 @@
 
 ;; redefine gd on evil mode
 (define-key evil-normal-state-map "gt" 'projectile-toggle-between-implementation-and-test)
+
+(setq evil-kill-on-visual-paste nil)
+
+(evil-define-key 'normal evil-org-mode-map
+                 (kbd ">") 'org-meta-right
+                 (kbd "<") 'org-meta-left)
+
+
+(use-package term-toggle)
 
 (use-package general 
   :ensure t
@@ -46,7 +59,7 @@
 
  "d" 'docker
 
- "tt" 'eshell-toggle
+ "tt" 'term-toggle
 
  "fs" 'save-buffer
  "fe" 'counsel-find-file
@@ -59,12 +72,21 @@
 
  ;; tests
  "tf" 'exunit-verify
+ "tr" 'exunit-rerun
  "ts" 'exunit-verify-single
  "ta" 'exunit-verify-all
+ "tq" 'kill-compilation
+ "tc" 'mix-credo
+
+ "en" 'next-error
+ "ep" 'previous-error
+ "es" 'flycheck-list-errors
 
  "TAB" 'last-buffer
 
  "gt" 'projectile-toggle-between-implementation-and-test
+
+ "gb" 'magit-blame
 
  "pt" 'treemacs
  "pa" 'projectile-add-known-project

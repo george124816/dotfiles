@@ -1,7 +1,18 @@
+;; Disable splash screen and startup message
+(setq inhibit-startup-message t)
+(setq initial-scratch-message nil)
+
 (menu-bar-mode 0)
 (when (display-graphic-p)
   (tool-bar-mode 0)
   (scroll-bar-mode 0))
+
+;; display relative line
+;; (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(global-display-line-numbers-mode)
+(setq display-line-numbers-type 'relative)
+
+(set-default 'truncate-lines nil)
 
 ;; Set default font
 (set-face-attribute 'default nil
@@ -10,7 +21,11 @@
                     :weight 'normal
                     :width 'normal)
 
-(use-package projectile)
+(use-package projectile
+  :config
+  (setq projectile-create-missing-test-files t)
+  (projectile-mode +1)
+  )
 
 (use-package all-the-icons
   :if (display-graphic-p))
@@ -51,7 +66,7 @@
   (setq dashboard-projects-backend 'projectile)
   (setq dashboard-items '((recents  . 10)
                           (bookmarks . 5)
-                          (projects . 5)
+                          (projects . 10)
                           (agenda . 10)
                           (registers . 5))))
 
@@ -65,5 +80,9 @@
 (use-package apropospriate-theme)
 (use-package doom-themes)
 
-(load-theme 'doom-snazzy t)
+;; (load-theme 'doom-snazzy t)
+(load-theme 'doom-tomorrow-night)
 
+(use-package rainbow-mode)
+
+(setq scroll-conservatively 100)

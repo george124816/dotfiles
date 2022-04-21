@@ -7,10 +7,7 @@
 (setq sml/no-confirm-load-theme t)
 (setq custom-safe-themes t)
 
-;; display relative line
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setq display-line-numbers-type 'relative)
-
-
-(use-package vterm
-  :ensure t)
+;; Start server.
+(require 'server)
+(unless (server-running-p)
+  (server-start))
