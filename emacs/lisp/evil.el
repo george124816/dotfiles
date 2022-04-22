@@ -4,9 +4,9 @@
 (use-package evil
   :demand t
   :init
-  (setq evil-want-C-u-scroll t) 
+  (setq evil-want-C-u-scroll t)
   (setq evil-want-keybinding nil)
-  (setq evil-undo-system 'undo-tree) 
+  (setq evil-undo-system 'undo-tree)
 
   :config
   (evil-mode 1))

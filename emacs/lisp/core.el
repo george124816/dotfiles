@@ -7,6 +7,8 @@
 (setq sml/no-confirm-load-theme t)
 (setq custom-safe-themes t)
 
+(setq native-comp-async-report-warnings-errors nil)
+
 ;; Start server.
 (require 'server)
 (unless (server-running-p)

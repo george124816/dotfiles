@@ -22,19 +22,19 @@
 
 (use-package elixir-yasnippets)
 
-(use-package yasnippet 
-  :hook (prog-mode . yas-minor-mode) 
+(use-package yasnippet
+  :hook (prog-mode . yas-minor-mode)
   :config (yas-reload-all))
 
-(use-package smartparens 
+(use-package smartparens
   :hook (prog-mode . smartparens-mode))
 
-(use-package rainbow-delimiters 
+(use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package lsp-ui
   :commands lsp-ui-mode
-  :hook (lsp-mode . lsp-ui-mode) 
+  :hook (lsp-mode . lsp-ui-mode)
   :config
   (setq lsp-ui-sideline-show-diagnostics t)
   )

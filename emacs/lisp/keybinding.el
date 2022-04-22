@@ -1,6 +1,6 @@
-(defun last-buffer() 
-  "Change window to last buffer visited." 
-  (interactive) 
+(defun last-buffer()
+  "Change window to last buffer visited."
+  (interactive)
   (switch-to-buffer (other-buffer (current-buffer))))
 
 (defun open-config-file()
@@ -31,7 +31,7 @@
 
 (use-package term-toggle)
 
-(use-package general 
+(use-package general
   :ensure t
   :init
   (setq general-override-states '(insert
@@ -43,10 +43,10 @@
                                   operator
                                   replace))
   :config
-  (general-evil-setup t) 
+  (general-evil-setup t)
   (general-create-definer global-definer
-    :keymaps 'override 
-    :states '(normal visual motion) 
+    :keymaps 'override
+    :states '(normal visual motion)
     :prefix "SPC"))
 
 (global-definer
@@ -54,8 +54,10 @@
 
  "cf" 'open-config-file
 
- "ff" 'counsel-fzf
- "fg" 'counsel-ag
+ ;; "ff" 'counsel-fzf
+ "ff" 'counsel-git
+ ;; "fg" 'counsel-ag
+ "fg" 'counsel-git-grep
 
  "d" 'docker
 
@@ -81,6 +83,8 @@
  "en" 'next-error
  "ep" 'previous-error
  "es" 'flycheck-list-errors
+
+ "eb" 'eval-buffer
 
  "TAB" 'last-buffer
 
