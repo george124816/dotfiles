@@ -76,6 +76,10 @@ call plug#begin('~/.vim/plugged')
   Plug 'roxma/nvim-yarp'
   Plug 'roxma/vim-hug-neovim-rpc'
 
+  Plug 'elixir-editors/vim-elixir'
+
+  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
   Plug 'vim-test/vim-test'
   Plug 'rcarriga/vim-ultest', { 'do': ':UpdateRemotePlugins' }
 
@@ -179,7 +183,7 @@ nnoremap <leader>tp :T mix format && mix credo && mix dialyzer && mix test<CR>
 nnoremap <leader>td :T mix dialyzer<CR>
 nnoremap <leader>tm :T MIX_ENV=test mix do ecto.drop, ecto.create, ecto.migrate<CR>
 nnoremap <leader>tc :T mix compile --all-warnings --warnings-as-errors<CR>
-nnoremap <leader>twf :T find test lib \| entr -cr mix test %<CR>
+nnoremap <leader>twf :T find test lib \| entr -cr mix test --seed 0 %<CR>
 nnoremap <leader>tws :T find test lib \| entr -cr mix test %:<C-r>=line('.')<CR><CR>
 nnoremap <leader>twa :T find test lib \| entr -cr mix test<CR>
 nnoremap <leader>twe :T find test lib \| entr -cr mix test --failed<CR>
@@ -271,7 +275,7 @@ require("indent_blankline").setup {
 require('orgmode').setup_ts_grammar()
 
 require'nvim-treesitter.configs'.setup {
-    ensure_installed = {"elixir", "org"},
+    ensure_installed = {"elixir", "org", "go"},
     pickers = {
         previewer = false,
     },
